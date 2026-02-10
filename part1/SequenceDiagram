@@ -1,0 +1,45 @@
+sequenceDiagram
+participant User
+participant API
+participant BusinessLogic
+participant Database
+
+%% 1) User Registration
+rect rgba(80,80,255,0.10)
+User->>API: Register (POST /users)
+API->>BusinessLogic: validate + create user
+BusinessLogic->>Database: save user
+Database-->>BusinessLogic: ok / error
+BusinessLogic-->>API: result
+API-->>User: success / failure
+end
+
+%% 2) Place Creation
+rect rgba(80,255,80,0.10)
+User->>API: Create Place (POST /places)
+API->>BusinessLogic: validate + create place
+BusinessLogic->>Database: save place
+Database-->>BusinessLogic: ok / error
+BusinessLogic-->>API: result
+API-->>User: success / failure
+end
+
+%% 3) Review Submission
+rect rgba(255,80,80,0.10)
+User->>API: Submit Review (POST /places/{id}/reviews)
+API->>BusinessLogic: validate + create review
+BusinessLogic->>Database: save review
+Database-->>BusinessLogic: ok / error
+BusinessLogic-->>API: result
+API-->>User: success / failure
+end
+
+%% 4) Fetch Places List
+rect rgba(255,200,80,0.10)
+User->>API: List Places (GET /places?filters)
+API->>BusinessLogic: validate filters + build query
+BusinessLogic->>Database: fetch places
+Database-->>BusinessLogic: places[]
+BusinessLogic-->>API: places[]
+API-->>User: 200 OK (list)
+end
