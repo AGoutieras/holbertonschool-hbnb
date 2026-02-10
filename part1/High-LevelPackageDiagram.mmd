@@ -1,0 +1,28 @@
+classDiagram
+%% --- Presentation Layer ---
+class PresentationLayer {
+    <<Interface>>
+    +ServiceAPI
+}
+
+%% --- Business Logic Layer ---
+class BusinessLogicLayer {
+    +User
+    +Place
+    +Review
+    +Amenity
+    +BusinessFacade
+}
+
+%% --- Persistence Layer ---
+class PersistenceLayer {
+    +UserRepo
+    +PlaceRepo
+    +ReviewRepo
+    +AmenityRepo
+    +Database
+}
+
+%% --- Relations ---
+PresentationLayer --> BusinessLogicLayer : Facade Pattern
+BusinessLogicLayer --> PersistenceLayer : Database Operations
