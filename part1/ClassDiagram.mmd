@@ -54,7 +54,18 @@ class Amenity {
     +delete()
 }
 
+class BusinessFacade {
+    +createUser()
+    +createPlace()
+    +createReview()
+    +createAmenity()
+}
+
 User "1" --> "*" Place : owns
 User "1" --> "*" Review : writes
 Place "1" --> "*" Review : receives
 Place "*" --> "*" Amenity : has
+BusinessFacade --> User
+BusinessFacade --> Place
+BusinessFacade --> Review
+BusinessFacade --> Amenity
