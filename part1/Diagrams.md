@@ -171,3 +171,81 @@ BusinessFacade --> Amenity
   - Each entity encapsulates its own behavior and data integrity rules.
 
 ---
+
+```mermaid
+sequenceDiagram
+participant User
+participant API
+participant BusinessLogic
+participant Database
+
+%% 1) User Registration
+rect rgba(80,80,255,0.10)
+User->>API: Register (POST /users)
+API->>BusinessLogic: validate + create user
+BusinessLogic->>Database: save user
+Database-->>BusinessLogic: ok / error
+BusinessLogic-->>API: result
+API-->>User: success / failure
+end
+
+%% 2) Place Creation
+rect rgba(80,255,80,0.10)
+User->>API: Create Place (POST /places)
+API->>BusinessLogic: validate + create place
+BusinessLogic->>Database: save place
+Database-->>BusinessLogic: ok / error
+BusinessLogic-->>API: result
+API-->>User: success / failure
+end
+
+%% 3) Review Submission
+rect rgba(255,80,80,0.10)
+User->>API: Submit Review (POST /places/{id}/reviews)
+API->>BusinessLogic: validate + create review
+BusinessLogic->>Database: save review
+Database-->>BusinessLogic: ok / error
+BusinessLogic-->>API: result
+API-->>User: success / failure
+end
+
+%% 4) Fetch Places List
+rect rgba(255,200,80,0.10)
+User->>API: List Places (GET /places?filters)
+API->>BusinessLogic: validate filters + build query
+BusinessLogic->>Database: fetch places
+Database-->>BusinessLogic: places[]
+BusinessLogic-->>API: places[]
+API-->>User: 200 OK (list)
+end
+```
+Les 4 acteurs du diagramme
+	•	User : l’utilisateur (ou un outil comme Postman) qui déclenche une action via une requête HTTP.
+	•	API (Presentation Layer) : la porte d’entrée de l’application. Elle reçoit la requête, vérifie que les données sont cohérentes (champs requis, formats, paramètres), puis prépare la réponse HTTP.
+	•	BusinessLogic (Business Layer) : la couche “métier”. Elle applique les règles de l’application (création d’objets, contrôles, décisions) et orchestre les opérations nécessaires.
+	•	Database (Persistence Layer) : la couche de persistance. Elle enregistre les informations (save) ou renvoie des résultats (fetch) à partir de la base de données.
+
+⸻
+
+1) User Registration — Inscription d’un utilisateur
+
+L’utilisateur envoie une demande d’inscription. L’API valide les informations de base, puis transmet à la logique métier qui crée l’utilisateur. La base de données enregistre ensuite ce nouvel utilisateur. Enfin, le résultat remonte : succès si le compte est créé, sinon échec en cas de problème.
+
+⸻
+
+2) Place Creation — Création d’une annonce
+
+L’utilisateur crée un “place” (une annonce). L’API vérifie les données envoyées, la logique métier construit l’objet “place” et applique les règles nécessaires, puis la base de données sauvegarde l’annonce. La réponse renvoyée indique si la création a réussi ou non.
+
+⸻
+
+3) Review Submission — Envoi d’un avis
+
+L’utilisateur soumet une review sur un place. L’API valide le contenu (par exemple le texte et la note), la logique métier crée la review, puis la base de données l’enregistre. Comme pour les autres appels, la réponse finale indique succès ou erreur.
+
+⸻
+
+4) Fetching a List of Places — Récupérer une liste
+
+L’utilisateur demande une liste de places selon des critères. L’API vérifie et interprète les paramètres, la logique métier construit la recherche, puis la base de données renvoie une liste de résultats. L’API retourne ensuite une réponse 200 OK contenant la liste.
+
