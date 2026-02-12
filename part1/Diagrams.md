@@ -219,33 +219,33 @@ BusinessLogic-->>API: places[]
 API-->>User: 200 OK (list)
 end
 ```
-Les 4 acteurs du diagramme
-	•	User : l’utilisateur (ou un outil comme Postman) qui déclenche une action via une requête HTTP.
-	•	API (Presentation Layer) : la porte d’entrée de l’application. Elle reçoit la requête, vérifie que les données sont cohérentes (champs requis, formats, paramètres), puis prépare la réponse HTTP.
-	•	BusinessLogic (Business Layer) : la couche “métier”. Elle applique les règles de l’application (création d’objets, contrôles, décisions) et orchestre les opérations nécessaires.
-	•	Database (Persistence Layer) : la couche de persistance. Elle enregistre les informations (save) ou renvoie des résultats (fetch) à partir de la base de données.
+The 4 actors in the diagram
+	•	User: the end user (or a tool like Postman) that triggers an action by sending an HTTP request.
+	•	API (Presentation Layer): the entry point of the application. It receives the request, checks that the data is consistent (required fields, formats, query parameters), and prepares the HTTP response.
+	•	BusinessLogic (Business Layer): the “business” layer. It applies the application rules (object creation, validations, decisions) and orchestrates the required operations.
+	•	Database (Persistence Layer): the persistence layer. It stores information (save) or returns results (fetch) from the database.
 
 ⸻
 
-1) User Registration — Inscription d’un utilisateur
+User Registration — Sign up a new user
 
-L’utilisateur envoie une demande d’inscription. L’API valide les informations de base, puis transmet à la logique métier qui crée l’utilisateur. La base de données enregistre ensuite ce nouvel utilisateur. Enfin, le résultat remonte : succès si le compte est créé, sinon échec en cas de problème.
-
-⸻
-
-2) Place Creation — Création d’une annonce
-
-L’utilisateur crée un “place” (une annonce). L’API vérifie les données envoyées, la logique métier construit l’objet “place” et applique les règles nécessaires, puis la base de données sauvegarde l’annonce. La réponse renvoyée indique si la création a réussi ou non.
+The user sends a registration request. The API validates the basic information, then forwards it to the business logic which creates the user. The database then stores the new user. Finally, the result is returned: success if the account is created, otherwise failure if something goes wrong.
 
 ⸻
 
-3) Review Submission — Envoi d’un avis
+Place Creation — Create a listing
 
-L’utilisateur soumet une review sur un place. L’API valide le contenu (par exemple le texte et la note), la logique métier crée la review, puis la base de données l’enregistre. Comme pour les autres appels, la réponse finale indique succès ou erreur.
+The user creates a “place” (a listing). The API checks the submitted data, the business logic builds the place object and applies the necessary rules, then the database saves the listing. The response indicates whether the creation succeeded or not.
 
 ⸻
 
-4) Fetching a List of Places — Récupérer une liste
+Review Submission — Submit a review
 
-L’utilisateur demande une liste de places selon des critères. L’API vérifie et interprète les paramètres, la logique métier construit la recherche, puis la base de données renvoie une liste de résultats. L’API retourne ensuite une réponse 200 OK contenant la liste.
+The user submits a review for a place. The API validates the content (for example the text and rating), the business logic creates the review, then the database stores it. As with the other calls, the final response indicates success or error.
+
+⸻
+
+Fetching a List of Places — Retrieve a list
+
+The user requests a list of places based on certain criteria. The API validates and interprets the parameters, the business logic builds the search, then the database returns a list of results. The API then returns a 200 OK response containing the list.
 
