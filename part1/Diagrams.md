@@ -7,6 +7,8 @@
 1. [Introduction](#introduction)
 2. [High-Level Architecture](#high-level-architecture)
 3. [Business Logic Layer](#business-logic-layer)
+4. [Sequence Diagram](#sequence-diagram)
+5. [Authors](#authors)
 
 ---
 
@@ -172,6 +174,12 @@ BusinessFacade --> Amenity
 
 ---
 
+## Sequence Diagram
+
+**Purpose of this Diagram:**  
+This sequence diagram illustrates how API requests flow through the three-layer architecture of HBnB (Presentation → Business Logic → Persistence). It highlights the responsibilities of each layer and the step-by-step interactions required to fulfill common use cases.
+
+**Diagram:**
 ```mermaid
 sequenceDiagram
 participant User
@@ -218,39 +226,65 @@ Database-->>BusinessLogic: places[]
 BusinessLogic-->>API: places[]
 API-->>User: 200 OK (list)
 end
+
+
 ```
-Sequence Diagrams
 
-Purpose of these Diagrams:
-These sequence diagrams illustrate how API requests flow through the three-layer architecture of HBnB (Presentation → Business Logic → Persistence). They highlight the responsibilities of each layer and the step-by-step interactions needed to fulfill common use cases.
+### Explanatory Notes
 
-The 4 Actors in the Diagram
-	•	User (Client)
-The end user (or a tool like Postman) that triggers an action by sending an HTTP request.
-	•	API (Presentation Layer)
-The entry point of the application. It receives the request, validates input (required fields, formats, query parameters), and builds the HTTP response.
-	•	BusinessLogic (Business Layer)
-The core “business” layer. It applies application rules (object creation, validations, decisions) and orchestrates the required operations.
-	•	Database (Persistence Layer)
-The persistence layer. It stores information (save) or returns results (fetch) from the database.
+- **User (Client):**  
+  The end user (or an API testing tool) that sends an HTTP request to trigger an action.
 
-⸻
+- **API (Presentation Layer):**  
+  The entry point of the application. It:
+  - Validates input data (required fields, formats, query parameters)
+  - Handles errors
+  - Constructs and returns HTTP responses
 
-Use Cases Covered
+- **BusinessLogic (Business Logic Layer):**  
+  The core layer responsible for:
+  - Applying business rules
+  - Creating domain objects
+  - Orchestrating operations between components
+  - Coordinating persistence actions
 
-1) User Registration — POST /users
-Goal: Create a new user account.
+- **Database (Persistence Layer):**  
+  Responsible for storing and retrieving data. It:
+  - Saves new entities
+  - Fetches records
+  - Returns operation status or result sets
+
+---
+
+### Use Cases Covered
+
+**1) User Registration — `POST /users`**  
+Goal: Create a new user account.  
 Flow: The user sends a registration request → the API validates the payload → BusinessLogic creates the user → the Database stores the new user → the API returns success or failure.
 
-2) Place Creation — POST /places
-Goal: Create a new place listing.
+---
+
+**2) Place Creation — `POST /places`**  
+Goal: Create a new place listing.  
 Flow: The user submits place data → the API validates input → BusinessLogic builds the place object and applies rules → the Database saves the place → the API returns success or failure.
 
-3) Review Submission — POST /places/{id}/reviews
-Goal: Submit a review for a specific place.
-Flow: The user submits a review (text/rating) → the API validates input → BusinessLogic creates the review → the Database stores it → the API returns success or error.
+---
 
-4) Fetching a List of Places — GET /places?filters
-Goal: Retrieve a list of places based on criteria.
-Flow: The user sends filters → the API parses and validates query parameters → BusinessLogic builds the search → the Database returns a list of places → the API responds with 200 OK and the results.
+**3) Review Submission — `POST /places/{id}/reviews`**  
+Goal: Submit a review for a specific place.  
+Flow: The user submits a review → the API validates input → BusinessLogic creates the review → the Database stores it → the API returns success or error.
+
+---
+
+**4) Fetching a List of Places — `GET /places?filters`**  
+Goal: Retrieve a list of places based on filtering criteria.  
+Flow: The user sends filters → the API parses and validates query parameters → BusinessLogic builds the search query → the Database returns matching places → the API responds with `200 OK` and the results.
+
+---
+
+## Authors
+
+- [Anthony Goutieras](https://github.com/AGoutieras)
+- [Anthony Di Domenico](https://github.com/Anthodido)
+
 
