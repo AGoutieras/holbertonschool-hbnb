@@ -219,33 +219,38 @@ BusinessLogic-->>API: places[]
 API-->>User: 200 OK (list)
 end
 ```
-The 4 actors in the diagram
-	•	User: the end user (or a tool like Postman) that triggers an action by sending an HTTP request.
-	•	API (Presentation Layer): the entry point of the application. It receives the request, checks that the data is consistent (required fields, formats, query parameters), and prepares the HTTP response.
-	•	BusinessLogic (Business Layer): the “business” layer. It applies the application rules (object creation, validations, decisions) and orchestrates the required operations.
-	•	Database (Persistence Layer): the persistence layer. It stores information (save) or returns results (fetch) from the database.
+Sequence Diagrams
+
+Purpose of these Diagrams:
+These sequence diagrams illustrate how API requests flow through the three-layer architecture of HBnB (Presentation → Business Logic → Persistence). They highlight the responsibilities of each layer and the step-by-step interactions needed to fulfill common use cases.
+
+The 4 Actors in the Diagram
+	•	User (Client)
+The end user (or a tool like Postman) that triggers an action by sending an HTTP request.
+	•	API (Presentation Layer)
+The entry point of the application. It receives the request, validates input (required fields, formats, query parameters), and builds the HTTP response.
+	•	BusinessLogic (Business Layer)
+The core “business” layer. It applies application rules (object creation, validations, decisions) and orchestrates the required operations.
+	•	Database (Persistence Layer)
+The persistence layer. It stores information (save) or returns results (fetch) from the database.
 
 ⸻
 
-User Registration — Sign up a new user
+Use Cases Covered
 
-The user sends a registration request. The API validates the basic information, then forwards it to the business logic which creates the user. The database then stores the new user. Finally, the result is returned: success if the account is created, otherwise failure if something goes wrong.
+1) User Registration — POST /users
+Goal: Create a new user account.
+Flow: The user sends a registration request → the API validates the payload → BusinessLogic creates the user → the Database stores the new user → the API returns success or failure.
 
-⸻
+2) Place Creation — POST /places
+Goal: Create a new place listing.
+Flow: The user submits place data → the API validates input → BusinessLogic builds the place object and applies rules → the Database saves the place → the API returns success or failure.
 
-Place Creation — Create a listing
+3) Review Submission — POST /places/{id}/reviews
+Goal: Submit a review for a specific place.
+Flow: The user submits a review (text/rating) → the API validates input → BusinessLogic creates the review → the Database stores it → the API returns success or error.
 
-The user creates a “place” (a listing). The API checks the submitted data, the business logic builds the place object and applies the necessary rules, then the database saves the listing. The response indicates whether the creation succeeded or not.
-
-⸻
-
-Review Submission — Submit a review
-
-The user submits a review for a place. The API validates the content (for example the text and rating), the business logic creates the review, then the database stores it. As with the other calls, the final response indicates success or error.
-
-⸻
-
-Fetching a List of Places — Retrieve a list
-
-The user requests a list of places based on certain criteria. The API validates and interprets the parameters, the business logic builds the search, then the database returns a list of results. The API then returns a 200 OK response containing the list.
+4) Fetching a List of Places — GET /places?filters
+Goal: Retrieve a list of places based on criteria.
+Flow: The user sends filters → the API parses and validates query parameters → BusinessLogic builds the search → the Database returns a list of places → the API responds with 200 OK and the results.
 
