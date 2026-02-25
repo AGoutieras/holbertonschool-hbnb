@@ -100,3 +100,16 @@ class PlaceResource(Resource):
         place_data = api.payload
         facade.update_place(place_id, place_data)
         return {"message": "Place updated successfully"}, 200
+
+@api.route('/<place_id>/reviews')
+class PlaceReviewList(Resource):
+    @api.response(200, 'List of reviews for the place retrieved successfully')
+    @api.response(404, 'Place not found')
+    def get(self, place_id):
+        """Get all reviews for a specific place"""
+        reviews = facade.get_reviews_by_place(place_id)
+        place = facade.get_place(place_id)
+        if not place:
+            return {'error': 'Place not found'}, 404
+        
+        return [{'id': review.id, 'text': review.text, 'rating': review.rating} for review in reviews], 200
