@@ -29,7 +29,7 @@ class HBnBFacade:
     def create_amenity(self, amenity_data):
         name = amenity_data.get("name")
         if name is None:
-            raise KeyError("name is required")
+            raise ValueError("name is required")
         new_amenity = Amenity(name)
         self.amenity_repo.add(new_amenity)
         return new_amenity
