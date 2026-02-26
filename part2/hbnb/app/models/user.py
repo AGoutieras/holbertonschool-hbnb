@@ -10,12 +10,11 @@ class User(BaseModel):
         if len(first_name) > 50:
             raise ValueError("first_name must be at most 50 characters")
 
-        
         if not isinstance(last_name, str) or not last_name.strip():
-            raise ValueError("Last_name must be a non-empty string")
+            raise ValueError("last_name must be a non-empty string")
         if len(last_name) > 50:
-            raise ValueError("Last_name must be at most 50 characters")
-        
+            raise ValueError("last_name must be at most 50 characters")
+
         if not isinstance(email, str) or not email.strip():
             raise ValueError("email must be a non-empty string")
         email = email.strip()

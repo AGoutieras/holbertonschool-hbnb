@@ -18,7 +18,7 @@ def create_app():
     # Register the reviews namespace
     api.add_namespace(reviews_ns, path='/api/v1/reviews')
 
-    # Register the ameniies namespace
+    # Register the amenites namespace
     api.add_namespace(amenities_ns, path='/api/v1/amenities')
 
     return app

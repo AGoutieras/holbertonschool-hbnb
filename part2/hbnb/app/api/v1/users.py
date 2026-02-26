@@ -24,7 +24,11 @@ class UserList(Resource):
         if existing_user:
             return {'error': 'Email already registered'}, 400
 
-        new_user = facade.create_user(user_data)
+        try:
+            new_user = facade.create_user(user_data)
+        except ValueError as e:
+            return {'error': str(e)}, 400
+
         return {
             'id': new_user.id,
             'first_name': new_user.first_name,
@@ -74,6 +78,9 @@ class UserResource(Resource):
 
         data = api.payload
         facade.user_repo.update(user.id, data)
-        user.first_name = data['first_name']
-        user.last_name = data['last_name']
-        user.email = data['email']
+        return {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email
+        }, 200
