@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 """Base model module.
 
 Defines BaseModel with common attributes for all entities:
