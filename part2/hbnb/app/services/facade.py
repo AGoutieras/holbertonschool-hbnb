@@ -2,6 +2,7 @@ from app.persistence.repository import InMemoryRepository
 from app.models.user import User
 from app.models.place import Place
 from app.models.review import Review
+from app.models.amenity import Amenity
 
 class HBnBFacade:
     def __init__(self):
@@ -22,6 +23,30 @@ class HBnBFacade:
 
     def get_user_by_email(self, email):
         return self.user_repo.get_by_attribute('email', email)
+
+    # ------------ AMENITY METHODS ------------
+
+    def create_amenity(self, amenity_data):
+        name = amenity_data.get("name")
+        if name is None:
+            raise KeyError("name is required")
+        new_amenity = Amenity(name)
+        self.amenity_repo.add(new_amenity)
+        return new_amenity
+
+    def get_amenity(self, amenity_id):
+        new_amenity_id = self.amenity_repo.get(amenity_id)
+        return new_amenity_id
+
+    def get_all_amenities(self):
+        new_all_amenity = self.amenity_repo.get_all()
+        return new_all_amenity
+
+    def update_amenity(self, amenity_id, amenity_data):
+        amenity = self.amenity_repo.get(amenity_id)
+        if not amenity:
+            raise ValueError ("amenity not found")
+        return self.amenity_repo.update(amenity_id, amenity_data)
 
     # ------------ PLACE METHODS ------------
 
