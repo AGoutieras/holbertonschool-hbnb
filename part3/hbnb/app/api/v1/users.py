@@ -1,4 +1,5 @@
 from flask_restx import Namespace, Resource, fields
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services import facade
 
 api = Namespace('users', description='User operations')
@@ -39,7 +40,7 @@ class UserList(Resource):
             'last_name': new_user.last_name,
             'email': new_user.email
         }, 201
-    
+
     @api.response(200, 'List of users retrieved successfully')
     def get(self):
         """Retrieve all users"""
@@ -53,6 +54,12 @@ class UserList(Resource):
                 'email': user.email
             })
         return result, 200
+
+
+user_update_model = api.model('UserUpdate', {
+    'first_name': fields.String(required=True, description='First name of the user'),
+    'last_name': fields.String(required=True, description='Last name of the user')
+})
 
 @api.route('/<user_id>')
 class UserResource(Resource):
@@ -70,18 +77,26 @@ class UserResource(Resource):
         'email': user.email
         }, 200
 
-    @api.expect(user_model, validate=True)
+    @api.expect(user_update_model, validate=True)
     @api.response(200, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input')
+    @jwt_required()
     def put(self, user_id):
         """Update user details by ID"""
         user = facade.get_user(user_id)
+        user_data = api.payload
+        current_user = get_jwt_identity()
         if not user:
             return {'error': 'User not found'}, 404
 
-        data = api.payload
-        facade.user_repo.update(user.id, data)
+        if user_id != current_user:
+            return {'error': 'Unauthorized action.'}, 403
+        
+        if 'email' in user_data or 'password' in user_data:
+            return {'error': 'You cannot modify email or password.'}, 400
+
+        facade.user_repo.update(user.id, user_data)
         return {
             'id': user.id,
             'first_name': user.first_name,
