@@ -33,4 +33,17 @@ def create_app(config_class="config.DevelopmentConfig"):
     # Register the auth namespace
     api.add_namespace(auth_ns, path='/api/v1/auth')
 
+    # Create first admin
+    from app.services import facade
+
+    existing_admin = facade.get_user_by_email("admin@hbnb.io")
+    if not existing_admin:
+        admin = facade.create_user({
+            "first_name": "Admin",
+            "last_name": "User",
+            "email": "admin@hbnb.io",
+            "password": bcrypt.generate_password_hash("admin123").decode("utf-8"),
+            "is_admin": True
+        })
+
     return app
