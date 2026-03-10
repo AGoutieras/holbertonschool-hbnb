@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 
 api = Namespace('users', description='User operations')
@@ -18,9 +18,15 @@ class UserList(Resource):
     @api.response(201, 'User successfully created')
     @api.response(400, 'Email already registered')
     @api.response(400, 'Invalid input data')
+    @jwt_required()
     def post(self):
         """Register a new user"""
         user_data = api.payload
+        
+        claims = get_jwt()
+        
+        if not claims.get("is_admin"):
+            return {'error': 'Admin privileges required'}, 403
 
         existing_user = facade.get_user_by_email(user_data['email'])
         if existing_user:
@@ -87,14 +93,22 @@ class UserResource(Resource):
         user = facade.get_user(user_id)
         user_data = api.payload
         current_user = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
         if not user:
             return {'error': 'User not found'}, 404
 
-        if user_id != current_user:
+        if not is_admin and user_id != current_user:
             return {'error': 'Unauthorized action.'}, 403
         
-        if 'email' in user_data or 'password' in user_data:
-            return {'error': 'You cannot modify email or password.'}, 400
+        if not is_admin and ('email' in user_data or 'password' in user_data):
+            return {'error': 'You cannot modify email or password'}, 400
+        
+        if is_admin and 'email' in user_data:
+            existing_user = facade.get_user_by_email(user_data['email'])
+            if existing_user and existing_user.id != user_id:
+                return {'error': 'Email is already in use'}, 400
 
         facade.user_repo.update(user.id, user_data)
         return {
