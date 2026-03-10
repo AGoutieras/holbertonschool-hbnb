@@ -1,0 +1,47 @@
+---
+config:
+  theme: redux-dark
+---
+erDiagram
+
+User {
+    int id
+    string first_name
+    string last_name
+    string email
+    string password
+    boolean is_admin
+}
+
+Place {
+    int id
+    string description
+    string title
+    float price
+    float latitude
+    float longitude
+    string owner_id
+}
+
+Review {
+    int id
+    string text
+    float rating
+    int user_id
+    int place_id
+}
+
+Amenity {
+    int id
+    string name
+}
+
+Place_Amenity {
+    int place_id
+    int amenity_id
+}
+
+User ||--o{ Place : "owns"
+Place ||--o{ Review : "owns"
+User ||--o{ Review : "owns"
+Place }o--o{ Amenity : "has"
