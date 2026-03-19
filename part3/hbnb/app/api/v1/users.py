@@ -116,9 +116,10 @@ class UserResource(Resource):
                 return {'error': 'Email is already in use'}, 400
 
         facade.user_repo.update(user.id, user_data)
+        updated_user = facade.get_user(user_id)
         return {
-            'id': user.id,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'email': user.email
+            'id': updated_user.id,
+            'first_name': updated_user.first_name,
+            'last_name': updated_user.last_name,
+            'email': updated_user.email
         }, 200
