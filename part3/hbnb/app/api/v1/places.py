@@ -28,6 +28,7 @@ place_model = api.model('Place', {
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
+
 @api.route('/')
 class PlaceList(Resource):
     @jwt_required()
@@ -67,6 +68,7 @@ class PlaceList(Resource):
             })
         return result, 200
 
+
 @api.route('/<place_id>')
 class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
@@ -77,18 +79,18 @@ class PlaceResource(Resource):
         if not place:
             return {'error': 'Place not found'}, 404
         return {
-        'id': place.id,
-        'title': place.title,
-        'description': place.description,
-        'latitude': place.latitude,
-        'longitude': place.longitude,
-        'owner': {
-            'id': place.owner.id,
-            'first_name': place.owner.first_name,
-            'last_name': place.owner.last_name,
-            'email': place.owner.email
-        },
-        'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in place.amenities]
+            'id': place.id,
+            'title': place.title,
+            'description': place.description,
+            'latitude': place.latitude,
+            'longitude': place.longitude,
+            'owner': {
+                'id': place.owner.id,
+                'first_name': place.owner.first_name,
+                'last_name': place.owner.last_name,
+                'email': place.owner.email
+            },
+            'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in place.amenities]
         }, 200
 
     @api.expect(place_model)
@@ -112,6 +114,7 @@ class PlaceResource(Resource):
         place_data = api.payload
         facade.update_place(place_id, place_data)
         return {"message": "Place updated successfully"}, 200
+
 
 @api.route('/<place_id>/reviews')
 class PlaceReviewList(Resource):
