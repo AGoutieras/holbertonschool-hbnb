@@ -9,6 +9,7 @@ amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity')
 })
 
+
 @api.route('/')
 class AmenityList(Resource):
     @api.expect(amenity_model)
@@ -18,21 +19,20 @@ class AmenityList(Resource):
     def post(self):
         """Register a new amenity"""
         amenity_data = api.payload
-        
+
         claims = get_jwt()
-        
+
         if not claims.get("is_admin"):
             return {'error': 'Admin privileges required'}, 403
-        
+
         try:
             new_amenity = facade.create_amenity(amenity_data)
         except ValueError as e:
-            return {'error' : str(e)}, 400
+            return {'error': str(e)}, 400
         return {
             'id': new_amenity.id,
             'name': new_amenity.name
         }, 201
-        
 
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
@@ -45,6 +45,7 @@ class AmenityList(Resource):
                 'name': amenity.name
             })
         return result, 200
+
 
 @api.route('/<amenity_id>')
 class AmenityResource(Resource):
@@ -71,11 +72,12 @@ class AmenityResource(Resource):
         claims = get_jwt()
         is_admin = claims.get('is_admin', False)
 
+        if not amenity:
+            return {'error': "amenity not found"}, 404
+
         if not is_admin:
             return {'error': 'Unauthorized action.'}, 403
 
-        if not amenity:
-            return {'error': "amenity not found"}, 404
         amenity_data = api.payload
         facade.update_amenity(amenity_id, amenity_data)
         return {"message": "Amenity updated successfully"}, 200

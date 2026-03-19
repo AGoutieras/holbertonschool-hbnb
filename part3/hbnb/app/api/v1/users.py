@@ -12,6 +12,7 @@ user_model = api.model('User', {
     'password': fields.String(required=True, description='Password of the user')
 })
 
+
 @api.route('/')
 class UserList(Resource):
     @api.expect(user_model, validate=True)
@@ -22,9 +23,9 @@ class UserList(Resource):
     def post(self):
         """Register a new user"""
         user_data = api.payload
-        
+
         claims = get_jwt()
-        
+
         if not claims.get("is_admin"):
             return {'error': 'Admin privileges required'}, 403
 
@@ -34,7 +35,8 @@ class UserList(Resource):
 
         try:
             from app import bcrypt
-            user_data['password'] = bcrypt.generate_password_hash(user_data['password']).decode('utf-8')
+            user_data['password'] = bcrypt.generate_password_hash(
+                user_data['password']).decode('utf-8')
             new_user = facade.create_user(user_data)
 
         except ValueError as e:
@@ -63,9 +65,12 @@ class UserList(Resource):
 
 
 user_update_model = api.model('UserUpdate', {
-    'first_name': fields.String(required=True, description='First name of the user'),
-    'last_name': fields.String(required=True, description='Last name of the user')
+    'first_name': fields.String(description='First name of the user'),
+    'last_name': fields.String(description='Last name of the user'),
+    'email': fields.String(description='Email of the user'),
+    'password': fields.String(description='Password of the user')
 })
+
 
 @api.route('/<user_id>')
 class UserResource(Resource):
@@ -77,13 +82,13 @@ class UserResource(Resource):
         if not user:
             return {'error': 'User not found'}, 404
         return {
-        'id': user.id,
-        'first_name': user.first_name,
-        'last_name': user.last_name,
-        'email': user.email
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email
         }, 200
 
-    @api.expect(user_update_model, validate=True)
+    @api.expect(user_update_model)
     @api.response(200, 'User successfully updated')
     @api.response(404, 'User not found')
     @api.response(400, 'Invalid input')
@@ -101,19 +106,20 @@ class UserResource(Resource):
 
         if not is_admin and user_id != current_user:
             return {'error': 'Unauthorized action.'}, 403
-        
+
         if not is_admin and ('email' in user_data or 'password' in user_data):
             return {'error': 'You cannot modify email or password'}, 400
-        
+
         if is_admin and 'email' in user_data:
             existing_user = facade.get_user_by_email(user_data['email'])
             if existing_user and existing_user.id != user_id:
                 return {'error': 'Email is already in use'}, 400
 
         facade.user_repo.update(user.id, user_data)
+        updated_user = facade.get_user(user_id)
         return {
-            'id': user.id,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'email': user.email
+            'id': updated_user.id,
+            'first_name': updated_user.first_name,
+            'last_name': updated_user.last_name,
+            'email': updated_user.email
         }, 200

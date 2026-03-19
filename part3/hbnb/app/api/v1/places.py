@@ -1,5 +1,5 @@
 from flask_restx import Namespace, Resource, fields
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 
 api = Namespace('places', description='Place operations')
@@ -27,6 +27,7 @@ place_model = api.model('Place', {
     'owner_id': fields.String(required=True, description='ID of the owner'),
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
+
 
 @api.route('/')
 class PlaceList(Resource):
@@ -67,6 +68,7 @@ class PlaceList(Resource):
             })
         return result, 200
 
+
 @api.route('/<place_id>')
 class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved successfully')
@@ -77,18 +79,18 @@ class PlaceResource(Resource):
         if not place:
             return {'error': 'Place not found'}, 404
         return {
-        'id': place.id,
-        'title': place.title,
-        'description': place.description,
-        'latitude': place.latitude,
-        'longitude': place.longitude,
-        'owner': {
-            'id': place.owner.id,
-            'first_name': place.owner.first_name,
-            'last_name': place.owner.last_name,
-            'email': place.owner.email
-        },
-        'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in place.amenities]
+            'id': place.id,
+            'title': place.title,
+            'description': place.description,
+            'latitude': place.latitude,
+            'longitude': place.longitude,
+            'owner': {
+                'id': place.owner.id,
+                'first_name': place.owner.first_name,
+                'last_name': place.owner.last_name,
+                'email': place.owner.email
+            },
+            'amenities': [{'id': amenity.id, 'name': amenity.name} for amenity in place.amenities]
         }, 200
 
     @api.expect(place_model)
@@ -99,17 +101,20 @@ class PlaceResource(Resource):
     def put(self, place_id):
         """Update a place's information"""
         current_user = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
         place = facade.get_place(place_id)
 
         if not place:
             return {'error': 'Place not found'}, 404
 
-        if place.owner.id != current_user:
+        if not is_admin and place.owner.id != current_user:
             return {'error': 'Unauthorized action'}, 403
 
         place_data = api.payload
         facade.update_place(place_id, place_data)
         return {"message": "Place updated successfully"}, 200
+
 
 @api.route('/<place_id>/reviews')
 class PlaceReviewList(Resource):

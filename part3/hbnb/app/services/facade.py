@@ -4,6 +4,7 @@ from app.models.place import Place
 from app.models.review import Review
 from app.models.amenity import Amenity
 
+
 class HBnBFacade:
     def __init__(self):
         self.user_repo = SQLAlchemyRepository(User)
@@ -30,7 +31,7 @@ class HBnBFacade:
         name = amenity_data.get("name")
         if name is None:
             raise ValueError("name is required")
-        new_amenity = Amenity(name)
+        new_amenity = Amenity(name=name)
         self.amenity_repo.add(new_amenity)
         return new_amenity
 
@@ -45,7 +46,7 @@ class HBnBFacade:
     def update_amenity(self, amenity_id, amenity_data):
         amenity = self.amenity_repo.get(amenity_id)
         if not amenity:
-            raise ValueError ("amenity not found")
+            raise ValueError("amenity not found")
         return self.amenity_repo.update(amenity_id, amenity_data)
 
     # ------------ PLACE METHODS ------------
@@ -54,6 +55,9 @@ class HBnBFacade:
         owner = self.user_repo.get(place_data.get('owner_id'))
         if not owner:
             raise ValueError("Owner not found")
+
+        if place_data['price'] < 0:
+            raise ValueError("Price must be positive")
 
         amenities = []
         for a_id in place_data.get('amenities', []):
@@ -72,7 +76,7 @@ class HBnBFacade:
         )
 
         for amenity in amenities:
-            place.add_amenity(amenity)
+            place.amenities.append(amenity)
 
         self.place_repo.add(place)
         return place
@@ -104,8 +108,8 @@ class HBnBFacade:
         review = Review(
             text=review_data['text'],
             rating=review_data['rating'],
-            place=place,
-            user=user,
+            place_id=place.id,
+            user_id=user.id,
         )
 
         self.review_repo.add(review)
@@ -118,7 +122,8 @@ class HBnBFacade:
         return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id):
-        reviews = [review for review in self.review_repo.get_all() if review.place.id == place_id]
+        reviews = [review for review in self.review_repo.get_all()
+                   if review.place_id == place_id]
         return reviews
 
     def update_review(self, review_id, review_data):
