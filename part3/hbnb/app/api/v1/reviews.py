@@ -32,7 +32,7 @@ class ReviewList(Resource):
             return {'error': 'You cannot review your own place.'}, 400
 
         for review in facade.get_reviews_by_place(review_data['place_id']):
-            if current_user == review.user.id:
+            if current_user == review.user_id:
                 return {'error': 'You have already reviewed this place.'}, 400
         try:
             new_review = facade.create_review(review_data)
@@ -43,8 +43,8 @@ class ReviewList(Resource):
             'id': new_review.id,
             'text': new_review.text,
             'rating': new_review.rating,
-            'user_id': new_review.user.id,
-            'place_id': new_review.place.id,
+            'user_id': new_review.user_id,
+            'place_id': new_review.place_id,
         }, 201
 
     @api.response(200, 'List of reviews retrieved successfully')
@@ -75,8 +75,8 @@ class ReviewResource(Resource):
             'id': review.id,
             'text': review.text,
             'rating': review.rating,
-            'user_id': review.user.id,
-            'place_id': review.place.id
+            'user_id': review.user_id,
+            'place_id': review.place_id
         }, 200
 
     @api.expect(review_model)
@@ -94,7 +94,7 @@ class ReviewResource(Resource):
         if not review:
             return {'error': 'Review not found'}, 404
 
-        if not is_admin and current_user != review.user.id:
+        if not is_admin and current_user != review.user_id:
             return {'error': 'Unauthorized action.'}, 403
 
         review_data = api.payload
@@ -114,7 +114,7 @@ class ReviewResource(Resource):
         if not review:
             return {'error': 'Review not found'}, 404
 
-        if not is_admin and current_user != review.user.id:
+        if not is_admin and current_user != review.user_id:
             return {'error': 'Unauthorized action.'}, 403
 
         facade.delete_review(review_id)
