@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS places (
     id CHAR(36) PRIMARY KEY,
     title VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL,
+    description TEXT,
     price DECIMAL(10, 2) NOT NULL,
     latitude FLOAT NOT NULL,
     longitude FLOAT NOT NULL,
