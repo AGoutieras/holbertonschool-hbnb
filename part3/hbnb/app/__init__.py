@@ -3,11 +3,6 @@ from flask_restx import Api
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager
 from flask_sqlalchemy import SQLAlchemy
-from app.api.v1.users import api as users_ns
-from app.api.v1.places import api as places_ns
-from app.api.v1.reviews import api as reviews_ns
-from app.api.v1.amenities import api as amenities_ns
-from app.api.v1.auth import api as auth_ns
 
 bcrypt = Bcrypt()
 jwt = JWTManager()
@@ -20,6 +15,12 @@ def create_app(config_class="config.DevelopmentConfig"):
     jwt.init_app(app)
     db.init_app(app)
     api = Api(app, version='1.0', title='HBnB API', description='HBnB Application API', doc='/api/v1/')
+
+    from app.api.v1.users import api as users_ns
+    from app.api.v1.places import api as places_ns
+    from app.api.v1.reviews import api as reviews_ns
+    from app.api.v1.amenities import api as amenities_ns
+    from app.api.v1.auth import api as auth_ns
 
     # Register the users namespace
     api.add_namespace(users_ns, path='/api/v1/users')
@@ -37,16 +38,16 @@ def create_app(config_class="config.DevelopmentConfig"):
     api.add_namespace(auth_ns, path='/api/v1/auth')
 
     # Create first admin
-    from app.services import facade
-
-    existing_admin = facade.get_user_by_email("admin@hbnb.io")
-    if not existing_admin:
-        admin = facade.create_user({
-            "first_name": "Admin",
-            "last_name": "User",
-            "email": "admin@hbnb.io",
-            "password": bcrypt.generate_password_hash("admin123").decode("utf-8"),
-            "is_admin": True
-        })
-
+    with app.app_context():
+        db.create_all()
+        from app.services import facade
+        existing_admin = facade.get_user_by_email("admin@hbnb.io")
+        if not existing_admin:
+            facade.create_user({
+                "first_name": "Admin",
+                "last_name": "User",
+                "email": "admin@hbnb.io",
+                "password": bcrypt.generate_password_hash("admin123").decode("utf-8"),
+                "is_admin": True
+            })
     return app

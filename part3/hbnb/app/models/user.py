@@ -1,35 +1,19 @@
 import re
 from .base_model import BaseModel
+from app import db
 
 class User(BaseModel):
-    def __init__(self, first_name, last_name, email, password, is_admin=False):
-        super().__init__()
 
-        if not isinstance(first_name, str) or not first_name.strip():
-            raise ValueError("first_name must be a non-empty string")
-        if len(first_name) > 50:
-            raise ValueError("first_name must be at most 50 characters")
+    __tablename__ = 'users'
 
-        if not isinstance(last_name, str) or not last_name.strip():
-            raise ValueError("last_name must be a non-empty string")
-        if len(last_name) > 50:
-            raise ValueError("last_name must be at most 50 characters")
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(120), nullable=False, unique=True)
+    password = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+    places  = db.relationship('Place', backref='owner', lazy=True)
+    reviews = db.relationship('Review', backref='author', lazy=True)
 
-        if not isinstance(email, str) or not email.strip():
-            raise ValueError("email must be a non-empty string")
-        email = email.strip()
-        if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
-            raise ValueError("email must be a valid email address")
-
-        if not isinstance(is_admin, bool):
-            raise ValueError("is_admin must be a boolean")
-
-        self.first_name = first_name.strip()
-        self.last_name = last_name.strip()
-        self.email = email.strip()
-        self.password = password
-        self.is_admin = is_admin
-        
     def hash_password(self, password):
         """Hashes the password before storing it."""
         from app import bcrypt
