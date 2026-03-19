@@ -56,6 +56,9 @@ class HBnBFacade:
         if not owner:
             raise ValueError("Owner not found")
 
+        if place_data['price'] < 0:
+            raise ValueError("Price must be positive")
+
         amenities = []
         for a_id in place_data.get('amenities', []):
             amenity = self.amenity_repo.get(a_id)
