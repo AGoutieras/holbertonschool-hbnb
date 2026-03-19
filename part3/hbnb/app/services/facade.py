@@ -4,6 +4,7 @@ from app.models.place import Place
 from app.models.review import Review
 from app.models.amenity import Amenity
 
+
 class HBnBFacade:
     def __init__(self):
         self.user_repo = SQLAlchemyRepository(User)
@@ -45,7 +46,7 @@ class HBnBFacade:
     def update_amenity(self, amenity_id, amenity_data):
         amenity = self.amenity_repo.get(amenity_id)
         if not amenity:
-            raise ValueError ("amenity not found")
+            raise ValueError("amenity not found")
         return self.amenity_repo.update(amenity_id, amenity_data)
 
     # ------------ PLACE METHODS ------------
@@ -72,7 +73,7 @@ class HBnBFacade:
         )
 
         for amenity in amenities:
-            place.add_amenity(amenity)
+            place.amenities.append(amenity)
 
         self.place_repo.add(place)
         return place
@@ -104,8 +105,8 @@ class HBnBFacade:
         review = Review(
             text=review_data['text'],
             rating=review_data['rating'],
-            place=place,
-            user=user,
+            place_id=place.id,
+            user_id=user.id,
         )
 
         self.review_repo.add(review)
@@ -118,7 +119,8 @@ class HBnBFacade:
         return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id):
-        reviews = [review for review in self.review_repo.get_all() if review.place.id == place_id]
+        reviews = [review for review in self.review_repo.get_all()
+                   if review.place_id == place_id]
         return reviews
 
     def update_review(self, review_id, review_data):
