@@ -1,29 +1,17 @@
 #!/usr/bin/python3
 
-from .place import Place
-from .user import User
 from .base_model import BaseModel
-
+from app import db
 
 class Review(BaseModel):
-    def __init__(self, text, rating, place, user):
-        super().__init__()
 
-        if not isinstance(text, str) or not text.strip():
-            raise ValueError("text must be a non-empty string")
-        
-        if not isinstance(rating, int):
-            raise ValueError("rating must be a integer")
-        if not 1 <= rating <= 5:
-            raise ValueError("rating must be between 1 and 5.")
-        
-        if not isinstance(place, Place):
-            raise ValueError("place must be a Place instance")
-        
-        if not isinstance(user, User):
-            raise ValueError("user must be a User instance")
+    __tablename__ = 'reviews'
 
-        self.text = text.strip()
-        self.rating = rating
-        self.place = place
-        self.user = user
+    text     = db.Column(db.Text, nullable=False)
+    rating   = db.Column(db.Integer, nullable=False)
+    user_id  = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    place_id = db.Column(db.String(36), db.ForeignKey('places.id'), nullable=False)
+
+    __table_args__ = (
+        db.UniqueConstraint('user_id', 'place_id', name='unique_user_place_review'),
+    )
