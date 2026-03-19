@@ -1,6 +1,6 @@
 erDiagram
     USER {
-        string id
+        uuid id
         string first_name
         string last_name
         string email
@@ -11,37 +11,37 @@ erDiagram
     }
 
     PLACE {
-        string id
+        uuid id
         string title
         string description
         float price
         float latitude
         float longitude
-        string owner_id
+        uuid owner_id
         datetime created_at
         datetime updated_at
     }
 
     REVIEW {
-        string id
+        uuid id
         string text
         int rating
-        string user_id
-        string place_id
+        uuid user_id
+        uuid place_id
         datetime created_at
         datetime updated_at
     }
 
     AMENITY {
-        string id
+        uuid id
         string name
         datetime created_at
         datetime updated_at
     }
 
     PLACE_AMENITY {
-        string place_id
-        string amenity_id
+        uuid place_id
+        uuid amenity_id
     }
 
     USER ||--o{ PLACE : "owns"
