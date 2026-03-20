@@ -99,7 +99,7 @@ pip install -r requirements.txt
 
 ```bash
 # Clone the repository
-git clone <repo_url>
+git clone https://github.com/AGoutieras/holbertonschool-hbnb.git
 cd hbnb
 
 # Create and activate the virtual environment
