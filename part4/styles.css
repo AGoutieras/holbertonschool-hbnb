@@ -1,0 +1,396 @@
+@font-face {
+  font-family: "HBnBCereal";
+  src: url("assets/HBnBCereal.woff2") format("woff2");
+  font-display: swap;
+}
+
+:root {
+  --icon-fill: #333;
+  --icon-fill-hover: #e0143d;
+}
+
+[data-theme="dark"] {
+  --icon-fill: #f0f0f0;
+  --icon-fill-hover: #fff;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: #fcfcfe;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-family: "HBNBCereal", sans-serif;
+}
+
+header {
+  height: 100px;
+  background: #f8f8f8;
+  background: linear-gradient(
+    0deg,
+    rgba(248, 248, 248, 1) 50%,
+    rgba(255, 255, 255, 1) 100%
+  );
+  color: #fff;
+  padding: 1rem;
+  border-bottom: 3px solid #ebebeb;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  color: rgb(0, 0, 0);
+  text-decoration: none;
+  margin-left: 1rem;
+}
+
+.nav-actions {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 5px;
+}
+
+main {
+  flex: 1;
+}
+
+hr {
+  max-width: 1100px;
+  margin: 2rem auto;
+  border: none;
+  border-top: 1px solid #e0e0e0;
+}
+
+.logo {
+  height: 33px;
+  width: auto;
+  margin: 15px;
+}
+
+.login-button,
+.details-button,
+.submit-button {
+  font-family: inherit;
+  display: inline-block;
+  padding: 14px 24px;
+  background-color: #e0143d;
+  color: white;
+  letter-spacing: 2px;
+  text-decoration: none;
+  border-radius: 45px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  line-height: 20px;
+  align-items: center;
+}
+
+.login-button-icon {
+  background-color: #e0143d;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#filter {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+#places-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.place-page {
+  width: 100%;
+  max-width: 1905px;
+}
+
+.place-card,
+.review-card {
+  background-color: #f8f8f8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-basis: 230px;
+  margin: 20px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  justify-content: center;
+  text-align: center;
+}
+
+.place-card {
+  justify-content: space-between;
+  min-height: 250px;
+  min-width: 250px;
+}
+
+.place-card > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+}
+
+.place-title,
+.amenities,
+#reviews,
+#add-review{
+  margin: auto;
+  max-width: 1150px;
+  padding: 24px;
+  font-size: 1em;
+}
+
+.place-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  max-width: 1100px;
+  height: 482px;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  text-align: center;
+  font-size: 1.5em;
+  line-height: 2.5;
+}
+
+.amenities {
+  display: grid;
+  grid-template-columns: 250px 250px;
+  row-gap: 24px;
+}
+
+.amenities h2,
+#reviews h2 {
+  grid-column: 1 / -1;
+}
+
+.amenity-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: #333;
+  mask-size: contain;
+  vertical-align: middle;
+}
+
+#reviews {
+  display: grid;
+  grid-template-columns: 457px 457px;
+  column-gap: 94px;
+}
+
+.review-card {
+  width: 457px;
+  height: 225px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#rating {
+  width: fit-content;
+}
+
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#add-review h2 {
+  margin-bottom: 24px;
+}
+
+.submit-button {
+  align-self: flex-end;
+}
+
+#review-text {
+  width: 100%;
+  height: 150px;
+  resize: none;
+  border-radius: 45px;
+  border: 1px solid #ddd;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  padding: 18px 20px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #333;
+}
+
+
+footer {
+  background: #f8f8f8;
+  color: #333;
+  text-align: center;
+  padding: 1em 0;
+  font-size: 0.9em;
+}
+
+.theme-toggle {
+  --size: 2rem;
+
+  background: none;
+  border: none;
+  padding: 0;
+
+  inline-size: var(--size);
+  block-size: var(--size);
+  aspect-ratio: 1;
+  border-radius: 50%;
+
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  outline-offset: 5px;
+
+  & > svg {
+    inline-size: 100%;
+    block-size: 100%;
+    stroke-linecap: round;
+  }
+
+  @media (hover: none) {
+    --size: 48px;
+  }
+}
+
+.sun-and-moon {
+  & > :is(.moon, .sun, .sun-beams) {
+    transform-origin: center center;
+  }
+
+  & > :is(.moon, .sun) {
+    fill: var(--icon-fill);
+
+    .theme-toggle:is(:hover, :focus-visible) > & {
+      fill: var(--icon-fill-hover);
+    }
+  }
+
+  & > .sun-beams {
+    stroke: var(--icon-fill);
+    stroke-width: 2px;
+
+    .theme-toggle:is(:hover, :focus-visible) & {
+      stroke: var(--icon-fill-hover);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    & > .sun {
+      transition: transform 0.5s ease-in-out;
+    }
+
+    & > .sun-beams {
+      transition:
+        transform 0.5s ease-in-out,
+        opacity 0.5s ease-in-out;
+    }
+
+    & > .moon > circle {
+      transition: cx 0.25s ease-out;
+    }
+  }
+
+  [data-theme="dark"] & {
+    & > .sun {
+      transform: scale(1.75);
+      transition-timing-function: ease-in-out;
+      transition-duration: 0.25s;
+    }
+
+    & > .sun-beams {
+      transform: rotateZ(-25deg);
+      transition-duration: 0.15s;
+      opacity: 0;
+    }
+
+    & > .moon > circle {
+      transform: translateX(-7px);
+
+      @supports (cx: 1px) {
+        transform: translateX(0);
+        cx: 17px;
+      }
+    }
+  }
+}
+
+[data-theme="dark"] body {
+  background-color: #1a1a1a;
+  color: #f0f0f0;
+}
+
+[data-theme="dark"] .logo {
+  content: url("assets/logo2.png");
+}
+
+[data-theme="dark"] footer,
+[data-theme="dark"] header {
+  color: #fcfcfe;
+  background: #2a2a2a;
+  border-bottom-color: #444;
+}
+
+[data-theme="dark"] .place-card,
+[data-theme="dark"] .place-details,
+[data-theme="dark"] .review-card {
+  border-color: #444;
+  background-color: #2a2a2a;
+}
+
+[data-theme="dark"] .amenity-icon {
+  background-color: #f8f8f8;
+}
+
+[data-theme="dark"] hr {
+  border-top-color: #444;
+}
+
+[data-theme="dark"] #review-text {
+  background-color: #2a2a2a;
+  color: #f0f0f0;
+  border-color: #444;
+}

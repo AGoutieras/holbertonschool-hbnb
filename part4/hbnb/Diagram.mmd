@@ -1,0 +1,51 @@
+erDiagram
+    USER {
+        uuid id
+        string first_name
+        string last_name
+        string email
+        string password
+        boolean is_admin
+        datetime created_at
+        datetime updated_at
+    }
+
+    PLACE {
+        uuid id
+        string title
+        string description
+        float price
+        float latitude
+        float longitude
+        uuid owner_id
+        datetime created_at
+        datetime updated_at
+    }
+
+    REVIEW {
+        uuid id
+        string text
+        int rating
+        uuid user_id
+        uuid place_id
+        datetime created_at
+        datetime updated_at
+    }
+
+    AMENITY {
+        uuid id
+        string name
+        datetime created_at
+        datetime updated_at
+    }
+
+    PLACE_AMENITY {
+        uuid place_id
+        uuid amenity_id
+    }
+
+    USER ||--o{ PLACE : "owns"
+    USER ||--o{ REVIEW : "writes"
+    PLACE||--o{ REVIEW : "recieves"
+    PLACE||--o{ PLACE_AMENITY : "has"
+    AMENITY||--o{ PLACE_AMENITY : "linked to"
