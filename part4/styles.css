@@ -81,9 +81,66 @@ hr {
   margin: 15px;
 }
 
+body.login main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-logo {
+  height: 100px;
+  width: 100px;
+  margin: auto;
+}
+
+#login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin: auto;
+  max-width: 650px;
+  height: 500px;
+  width: 100%;
+  border-radius: 10px;
+  padding: 2rem;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  text-align: center;
+  font-size: 1.5em;
+  line-height: 2.5;
+}
+
+#login-form input {
+  width: 100%;
+  resize: none;
+  border-radius: 25px;
+  border: 1px solid #ddd;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  padding: 18px 20px;
+  font-family: inherit;
+  font-size: 1rem;
+  color: #333;
+  border: 1px solid #e0e0e0;
+}
+
+#review-text:focus,
+#login-form input:focus {
+  outline: 2px solid #e0143d;
+  box-shadow: 0 1px 10px #e0143d;
+  transition: outline ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+}
+
+.login-submit {
+  margin-top: 2rem;
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: fit-content;
+}
+
 .login-button,
 .details-button,
 .submit-button {
+  width: fit-content;
   font-family: inherit;
   display: inline-block;
   padding: 14px 24px;
@@ -162,7 +219,7 @@ hr {
 .place-title,
 .amenities,
 #reviews,
-#add-review{
+#add-review {
   margin: auto;
   max-width: 1150px;
   padding: 24px;
@@ -258,7 +315,6 @@ hr {
   font-size: 1rem;
   color: #333;
 }
-
 
 footer {
   background: #f8f8f8;
@@ -374,6 +430,7 @@ footer {
   border-bottom-color: #444;
 }
 
+[data-theme="dark"] #login-form,
 [data-theme="dark"] .place-card,
 [data-theme="dark"] .place-details,
 [data-theme="dark"] .review-card {
@@ -393,4 +450,13 @@ footer {
   background-color: #2a2a2a;
   color: #f0f0f0;
   border-color: #444;
+}
+
+[data-theme="dark"] #login-form input:focus {
+  outline: 2px solid #f8f8f8;
+  box-shadow: 0 2px 6px #f8f8f8;
+}
+
+[data-theme="dark"] .login-logo {
+  content: url("assets/logo4.png");
 }
