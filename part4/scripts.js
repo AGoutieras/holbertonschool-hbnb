@@ -169,7 +169,7 @@ function displayPlaces (places) {
       <h4>${place.title}</h4>
       <p>Price per night: $${place.price}</p>
     </div>
-    <a href="place.html?id=${place.id}" class="details-button">View Details</a>`;
+    <a href="place.html?id=${place.id}" class="details-button" target="_blank">View Details</a>`;
     placesList.appendChild(placeCard);
   }
 }
