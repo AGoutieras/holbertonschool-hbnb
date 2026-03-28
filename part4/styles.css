@@ -4,15 +4,65 @@
   font-display: swap;
 }
 
+/* ==================== CUSTOM PROPERTIES ==================== */
+
 :root {
+  /* Main colors */
+  --color-primary: #e0143d;
+  --color-primary-hover: #c91034;
+  --color-text: #333;
+  --color-text-light: #f0f0f0;
+  --color-bg: #fcfcfe;
+  --color-bg-light: #f8f8f8;
+  --color-border: #ddd;
+  --color-border-light: #e0e0e0;
+  --color-border-dark: #ebebeb;
+
+  /* Icons */
   --icon-fill: #333;
   --icon-fill-hover: #e0143d;
+
+  /* Spacing */
+  --spacing-xs: 5px;
+  --spacing-sm: 10px;
+  --spacing-md: 20px;
+  --spacing-lg: 24px;
+  --spacing-xl: 2rem;
+
+  /* Dimensions */
+  --border-radius-small: 10px;
+  --border-radius-full: 45px;
+  --border-radius-circle: 50%;
+
+  /* Shadow */
+  --shadow-card: 0 6px 16px rgba(0, 0, 0, 0.12);
+  --shadow-focus: 0 1px 10px;
+
+  /* Transitions */
+  --transition-fast: ease-in-out 0.15s;
+
+  /* Fonts */
+  --font-family: "HBnBCereal", sans-serif;
+  --font-size-sm: 0.8125rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.5em;
+  --line-height-lg: 2.5;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --letter-spacing: 2px;
 }
 
 [data-theme="dark"] {
   --icon-fill: #f0f0f0;
   --icon-fill-hover: #fff;
+  --color-text: #f0f0f0;
+  --color-bg: #1a1a1a;
+  --color-bg-light: #2a2a2a;
+  --color-border: #444;
+  --color-border-dark: #444;
 }
+
+/* ==================== RESET ==================== */
 
 * {
   box-sizing: border-box;
@@ -20,26 +70,30 @@
   padding: 0;
 }
 
+/* ==================== GLOBAL STYLES ==================== */
+
 body {
-  background-color: #fcfcfe;
-  color: #333;
+  background-color: var(--color-bg);
+  color: var(--color-text);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  font-family: "HBNBCereal", sans-serif;
+  font-family: var(--font-family);
 }
+
+/* ==================== HEADER & NAVIGATION ==================== */
 
 header {
   height: 100px;
-  background: #f8f8f8;
+  background: var(--color-bg-light);
   background: linear-gradient(
     0deg,
-    rgba(248, 248, 248, 1) 50%,
-    rgba(255, 255, 255, 1) 100%
+    var(--color-bg-light) 50%,
+    #fff 100%
   );
   color: #fff;
   padding: 1rem;
-  border-bottom: 3px solid #ebebeb;
+  border-bottom: 3px solid var(--color-border-dark);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -52,7 +106,7 @@ nav {
 }
 
 nav a {
-  color: rgb(0, 0, 0);
+  color: var(--color-text);
   text-decoration: none;
   margin-left: 1rem;
 }
@@ -61,18 +115,7 @@ nav a {
   display: flex;
   flex-direction: row-reverse;
   align-items: center;
-  gap: 5px;
-}
-
-main {
-  flex: 1;
-}
-
-hr {
-  max-width: 1100px;
-  margin: 2rem auto;
-  border: none;
-  border-top: 1px solid #e0e0e0;
+  gap: var(--spacing-xs);
 }
 
 .logo {
@@ -80,6 +123,32 @@ hr {
   width: auto;
   margin: 15px;
 }
+
+[data-theme="dark"] .logo {
+  content: url("assets/logo2.png");
+}
+
+/* ==================== MAIN & LAYOUT ==================== */
+
+main {
+  flex: 1;
+}
+
+.place-page {
+  width: 100%;
+  max-width: 1905px;
+}
+
+/* ==================== HORIZONTAL SEPARATOR ==================== */
+
+hr {
+  max-width: 1100px;
+  margin: var(--spacing-xl) auto;
+  border: none;
+  border-top: 1px solid var(--color-border-light);
+}
+
+/* ==================== LOGIN PAGE ==================== */
 
 body.login main {
   display: flex;
@@ -93,6 +162,10 @@ body.login main {
   margin: auto;
 }
 
+[data-theme="dark"] .login-logo {
+  content: url("assets/logo4.png");
+}
+
 #login-form {
   display: flex;
   flex-direction: column;
@@ -101,41 +174,43 @@ body.login main {
   max-width: 650px;
   height: 500px;
   width: 100%;
-  border-radius: 10px;
-  padding: 2rem;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  border-radius: var(--border-radius-small);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-card);
   text-align: center;
-  font-size: 1.5em;
-  line-height: 2.5;
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-lg);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-light);
 }
 
-#login-form input {
+#login-form input,
+#review-text {
   width: 100%;
   resize: none;
-  border-radius: 25px;
-  border: 1px solid #ddd;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  border-radius: var(--border-radius-full);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
   padding: 18px 20px;
   font-family: inherit;
-  font-size: 1rem;
-  color: #333;
-  border: 1px solid #e0e0e0;
+  font-size: var(--font-size-base);
+  color: var(--color-text);
+  background-color: var(--color-bg-light);
 }
 
 #review-text:focus,
 #login-form input:focus {
-  outline: 2px solid #e0143d;
-  box-shadow: 0 1px 10px #e0143d;
-  transition: outline ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  outline: 2px solid var(--color-primary);
+  box-shadow: var(--shadow-focus) var(--color-primary);
+  transition: outline var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.login-submit {
-  margin-top: 2rem;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  width: fit-content;
+[data-theme="dark"] #login-form input:focus {
+  outline: 2px solid #f8f8f8;
+  box-shadow: 0 2px 6px #f8f8f8;
 }
+
+/* ==================== BUTTONS ==================== */
 
 .login-button,
 .details-button,
@@ -144,35 +219,61 @@ body.login main {
   font-family: inherit;
   display: inline-block;
   padding: 14px 24px;
-  background-color: #e0143d;
+  background-color: var(--color-primary);
   color: white;
-  letter-spacing: 2px;
+  letter-spacing: var(--letter-spacing);
   text-decoration: none;
-  border-radius: 45px;
-  font-size: 1rem;
-  font-weight: 500;
+  border-radius: var(--border-radius-full);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   border: none;
   cursor: pointer;
   line-height: 20px;
   align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.login-button:hover,
+.details-button:hover,
+.submit-button:hover {
+  background-color: var(--color-primary-hover);
 }
 
 .login-button-icon {
-  background-color: #e0143d;
+  background-color: var(--color-primary);
   width: 48px;
   height: 48px;
-  border-radius: 50%;
+  border-radius: var(--border-radius-circle);
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.2s ease;
 }
+
+.login-button-icon:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.login-submit {
+  margin-top: var(--spacing-xl);
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  width: fit-content;
+}
+
+/* ==================== FILTER SECTION ==================== */
 
 #filter {
   display: flex;
   justify-content: center;
-  padding: 2rem;
+  padding: var(--spacing-xl);
 }
+
+/* ==================== PLACES LIST & CARDS ==================== */
 
 #places-list {
   display: flex;
@@ -180,31 +281,28 @@ body.login main {
   justify-content: center;
 }
 
-.place-page {
-  width: 100%;
-  max-width: 1905px;
-}
-
-.place-card,
-.review-card {
-  background-color: #f8f8f8;
+.place-card {
+  background-color: var(--color-bg-light);
   display: flex;
   flex-direction: column;
   align-items: center;
   flex-basis: 230px;
-  margin: 20px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 10px;
-  font-size: 0.8125rem;
-  justify-content: center;
-  text-align: center;
-}
-
-.place-card {
+  margin: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-small);
+  font-size: var(--font-size-sm);
   justify-content: space-between;
+  text-align: center;
   min-height: 250px;
   min-width: 250px;
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.place-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
 .place-card > div {
@@ -212,19 +310,11 @@ body.login main {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: var(--spacing-md);
   flex: 1;
 }
 
-.place-title,
-.amenities,
-#reviews,
-#add-review {
-  margin: auto;
-  max-width: 1150px;
-  padding: 24px;
-  font-size: 1em;
-}
+/* ==================== PLACE DETAILS ==================== */
 
 .place-details {
   display: flex;
@@ -233,18 +323,32 @@ body.login main {
   margin: auto;
   max-width: 1100px;
   height: 482px;
-  border-radius: 10px;
-  padding: 2rem;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  border-radius: var(--border-radius-small);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-card);
   text-align: center;
-  font-size: 1.5em;
-  line-height: 2.5;
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-lg);
+  border: 1px solid var(--color-border);
+  background-color: var(--color-bg-light);
 }
+
+.place-title,
+.amenities,
+#reviews,
+#add-review {
+  margin: auto;
+  max-width: 1150px;
+  padding: var(--spacing-lg);
+  font-size: var(--font-size-base);
+}
+
+/* ==================== AMENITIES SECTION ==================== */
 
 .amenities {
   display: grid;
   grid-template-columns: 250px 250px;
-  row-gap: 24px;
+  row-gap: var(--spacing-lg);
 }
 
 .amenities h2,
@@ -256,10 +360,16 @@ body.login main {
   display: inline-block;
   width: 24px;
   height: 24px;
-  background-color: #333;
+  background-color: var(--color-text);
   mask-size: contain;
   vertical-align: middle;
 }
+
+[data-theme="dark"] .amenity-icon {
+  background-color: #f8f8f8;
+}
+
+/* ==================== REVIEWS SECTION ==================== */
 
 #reviews {
   display: grid;
@@ -268,15 +378,28 @@ body.login main {
 }
 
 .review-card {
+  background-color: var(--color-bg-light);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 457px;
   height: 225px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  margin: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-small);
+  font-size: var(--font-size-sm);
+  text-align: center;
+  box-shadow: var(--shadow-card);
+  justify-content: center;
 }
+
+/* ==================== FORM STYLES ==================== */
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--spacing-sm);
 }
 
 .form-actions {
@@ -285,44 +408,40 @@ body.login main {
   align-items: center;
 }
 
+.rating-row {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
 #rating {
   width: fit-content;
 }
 
-.rating-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+#add-review h2 {
+  margin-bottom: var(--spacing-lg);
 }
 
-#add-review h2 {
-  margin-bottom: 24px;
+#review-text {
+  height: 150px;
 }
 
 .submit-button {
   align-self: flex-end;
 }
 
-#review-text {
-  width: 100%;
-  height: 150px;
-  resize: none;
-  border-radius: 45px;
-  border: 1px solid #ddd;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-  padding: 18px 20px;
-  font-family: inherit;
-  font-size: 1rem;
-  color: #333;
-}
+/* ==================== FOOTER ==================== */
 
 footer {
-  background: #f8f8f8;
-  color: #333;
+  background: var(--color-bg-light);
+  color: var(--color-text);
   text-align: center;
   padding: 1em 0;
   font-size: 0.9em;
+  border-top: 1px solid var(--color-border);
 }
+
+/* ==================== THEME TOGGLE BUTTON ==================== */
 
 .theme-toggle {
   --size: 2rem;
@@ -334,129 +453,107 @@ footer {
   inline-size: var(--size);
   block-size: var(--size);
   aspect-ratio: 1;
-  border-radius: 50%;
+  border-radius: var(--border-radius-circle);
 
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
   outline-offset: 5px;
 
-  & > svg {
-    inline-size: 100%;
-    block-size: 100%;
-    stroke-linecap: round;
-  }
-
   @media (hover: none) {
     --size: 48px;
   }
 }
 
-.sun-and-moon {
-  & > :is(.moon, .sun, .sun-beams) {
-    transform-origin: center center;
-  }
+.theme-toggle > svg {
+  inline-size: 100%;
+  block-size: 100%;
+  stroke-linecap: round;
+}
 
-  & > :is(.moon, .sun) {
-    fill: var(--icon-fill);
+.sun-and-moon > :is(.moon, .sun, .sun-beams) {
+  transform-origin: center center;
+}
 
-    .theme-toggle:is(:hover, :focus-visible) > & {
-      fill: var(--icon-fill-hover);
-    }
-  }
+.sun-and-moon > :is(.moon, .sun) {
+  fill: var(--icon-fill);
 
-  & > .sun-beams {
-    stroke: var(--icon-fill);
-    stroke-width: 2px;
-
-    .theme-toggle:is(:hover, :focus-visible) & {
-      stroke: var(--icon-fill-hover);
-    }
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    & > .sun {
-      transition: transform 0.5s ease-in-out;
-    }
-
-    & > .sun-beams {
-      transition:
-        transform 0.5s ease-in-out,
-        opacity 0.5s ease-in-out;
-    }
-
-    & > .moon > circle {
-      transition: cx 0.25s ease-out;
-    }
-  }
-
-  [data-theme="dark"] & {
-    & > .sun {
-      transform: scale(1.75);
-      transition-timing-function: ease-in-out;
-      transition-duration: 0.25s;
-    }
-
-    & > .sun-beams {
-      transform: rotateZ(-25deg);
-      transition-duration: 0.15s;
-      opacity: 0;
-    }
-
-    & > .moon > circle {
-      transform: translateX(-7px);
-
-      @supports (cx: 1px) {
-        transform: translateX(0);
-        cx: 17px;
-      }
-    }
+  .theme-toggle:is(:hover, :focus-visible) & {
+    fill: var(--icon-fill-hover);
   }
 }
 
-[data-theme="dark"] body {
-  background-color: #1a1a1a;
-  color: #f0f0f0;
+.sun-and-moon > .sun-beams {
+  stroke: var(--icon-fill);
+  stroke-width: 2px;
+
+  .theme-toggle:is(:hover, :focus-visible) & {
+    stroke: var(--icon-fill-hover);
+  }
 }
 
-[data-theme="dark"] .logo {
-  content: url("assets/logo2.png");
+@media (prefers-reduced-motion: no-preference) {
+  .sun-and-moon > .sun {
+    transition: transform 0.5s ease-in-out;
+  }
+
+  .sun-and-moon > .sun-beams {
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  }
+
+  .sun-and-moon > .moon > circle {
+    transition: cx 0.25s ease-out;
+  }
 }
 
-[data-theme="dark"] footer,
+[data-theme="dark"] .sun-and-moon > .sun {
+  transform: scale(1.75);
+  transition-timing-function: ease-in-out;
+  transition-duration: 0.25s;
+}
+
+[data-theme="dark"] .sun-and-moon > .sun-beams {
+  transform: rotateZ(-25deg);
+  transition-duration: 0.15s;
+  opacity: 0;
+}
+
+[data-theme="dark"] .sun-and-moon > .moon > circle {
+  transform: translateX(-7px);
+
+  @supports (cx: 1px) {
+    transform: translateX(0);
+    cx: 17px;
+  }
+}
+
+/* ==================== DARK THEME ==================== */
+
 [data-theme="dark"] header {
   color: #fcfcfe;
-  background: #2a2a2a;
-  border-bottom-color: #444;
+  background: var(--color-bg-light);
+  border-bottom-color: var(--color-border);
+}
+
+[data-theme="dark"] footer {
+  color: #fcfcfe;
+  background: var(--color-bg-light);
+  border-top-color: var(--color-border);
 }
 
 [data-theme="dark"] #login-form,
 [data-theme="dark"] .place-card,
 [data-theme="dark"] .place-details,
 [data-theme="dark"] .review-card {
-  border-color: #444;
-  background-color: #2a2a2a;
-}
-
-[data-theme="dark"] .amenity-icon {
-  background-color: #f8f8f8;
-}
-
-[data-theme="dark"] hr {
-  border-top-color: #444;
+  border-color: var(--color-border);
+  background-color: var(--color-bg-light);
+  color: var(--color-text);
 }
 
 [data-theme="dark"] #review-text {
-  background-color: #2a2a2a;
-  color: #f0f0f0;
-  border-color: #444;
+  border-color: var(--color-border);
 }
 
-[data-theme="dark"] #login-form input:focus {
-  outline: 2px solid #f8f8f8;
-  box-shadow: 0 2px 6px #f8f8f8;
-}
-
-[data-theme="dark"] .login-logo {
-  content: url("assets/logo4.png");
+[data-theme="dark"] hr {
+  border-top-color: var(--color-border);
 }
