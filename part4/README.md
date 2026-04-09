@@ -60,7 +60,7 @@ The details page loads a single place by ID from the URL query string. It shows:
 
 ### Add review
 
-Authenticated users can submit a review directly from the place details page. The review form is embedded in `place.html`, and it sends the review text and rating to the API before displaying a success or error message.
+Authenticated users can submit a review directly from the place details page. The same review form is also available in the dedicated `add_review.html` page, using the same visual style and the same API flow. In both cases, the form sends the review text and rating to the API before displaying a success or error message.
 
 ### Theme toggle
 
