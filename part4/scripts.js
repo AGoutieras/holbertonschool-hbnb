@@ -11,6 +11,25 @@ function getCookie (name) {
   }
 }
 
+function buildLoginHref () {
+  const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+  const nextPath = currentPath.includes('login.html') ? 'index.html' : currentPath;
+  return `login.html?next=${encodeURIComponent(nextPath)}`;
+}
+
+function getSafePostLoginPath () {
+  const params = new URLSearchParams(window.location.search);
+  const next = params.get('next');
+
+  if (!next) return 'index.html';
+  if (next.startsWith('http://') || next.startsWith('https://') || next.startsWith('//')) {
+    return 'index.html';
+  }
+  if (next.includes('login.html')) return 'index.html';
+
+  return next;
+}
+
 // ============ THEME ============
 
 const storageKey = 'theme-preference';
@@ -43,6 +62,27 @@ const reflectPreference = () => {
   const logo = document.querySelector('.logo');
   if (logo) {
     logo.src = theme.value === 'dark' ? 'assets/logo2.png' : 'assets/logo.png';
+  }
+
+  const footerHolbertonLogo = document.querySelector('.footer-holberton-logo');
+  if (footerHolbertonLogo) {
+    footerHolbertonLogo.src = theme.value === 'dark'
+      ? 'assets/footer_holberton2.svg'
+      : 'assets/footer_holberton1.svg';
+  }
+
+  const footerGithubLogo = document.querySelector('.footer-github-logo');
+  if (footerGithubLogo) {
+    footerGithubLogo.src = theme.value === 'dark'
+      ? 'assets/footer_github2.svg'
+      : 'assets/footer_github1.svg';
+  }
+
+  const footerLinkedinLogo = document.querySelector('.footer-linkedin-logo');
+  if (footerLinkedinLogo) {
+    footerLinkedinLogo.src = theme.value === 'dark'
+      ? 'assets/footer_linkedin2.svg'
+      : 'assets/footer_linkedin1.svg';
   }
 };
 
@@ -80,7 +120,7 @@ async function loginUser (email, password) {
   if (response.ok) {
     const data = await response.json();
     document.cookie = `token=${data.access_token}; path=/`;
-    window.location.href = 'index.html';
+    window.location.href = getSafePostLoginPath();
   } else {
     alert('Login failed: ' + response.statusText);
   }
@@ -97,21 +137,25 @@ function checkAuthentication () {
   const addReview = document.getElementById('add-review');
 
   if (!token) {
-    loginLink.href = 'login.html';
+    const loginHref = buildLoginHref();
+
+    loginLink.href = loginHref;
     loginLink.className = 'login-button-icon';
     loginLink.innerHTML = '<img src="assets/icons/icon-login.png" alt="Login" width="20" height="20">';
 
     if (addReview) {
-      const textarea = addReview.querySelector('textarea');
-      const submitBtn = addReview.querySelector('button[type="submit"]');
+      addReview.classList.add('auth-locked');
 
-      if (textarea) textarea.style.display = 'none';
-      if (submitBtn) submitBtn.style.display = 'none';
+      const reviewTitle = addReview.querySelector('h2');
+      const reviewForm = addReview.querySelector('#review-form');
+
+      if (reviewTitle) reviewTitle.hidden = true;
+      if (reviewForm) reviewForm.hidden = true;
 
       if (!addReview.querySelector('.login-message')) {
         const message = document.createElement('p');
         message.className = 'login-message';
-        message.innerHTML = 'Please <a href="login.html">login</a> to add a review.';
+        message.innerHTML = `Please <a href="${loginHref}">login</a> to add a review.`;
         addReview.prepend(message);
       }
     }
@@ -122,11 +166,13 @@ function checkAuthentication () {
     loginLink.onclick = logoutUser;
 
     if (addReview) {
-      const textarea = addReview.querySelector('textarea');
-      const submitBtn = addReview.querySelector('button[type="submit"]');
+      addReview.classList.remove('auth-locked');
 
-      if (textarea) textarea.style.display = 'block';
-      if (submitBtn) submitBtn.style.display = 'block';
+      const reviewTitle = addReview.querySelector('h2');
+      const reviewForm = addReview.querySelector('#review-form');
+
+      if (reviewTitle) reviewTitle.hidden = false;
+      if (reviewForm) reviewForm.hidden = false;
 
       const message = addReview.querySelector('.login-message');
       if (message) message.remove();
@@ -171,7 +217,7 @@ function displayPlaces (places) {
     </div>
     <a href="place.html?id=${place.id}" class="details-button" target="_blank">View Details</a>`;
     placesList.appendChild(placeCard);
-  }
+  } 
 }
 
 function getPlaceIdFromURL () {
@@ -197,6 +243,13 @@ async function fetchPlaceDetails (token, placeId) {
 function displayPlaceDetails (place) {
   const placeDetails = document.getElementById('place-details');
   placeDetails.innerHTML = '';
+
+  const renderStar = (filled, className) => `
+    <span class="star-button ${filled ? 'is-filled' : ''} ${className}" aria-hidden="true">
+      <svg class="star-icon" viewBox="0 0 24 24" focusable="false">
+        <path d="M12 2.7 14.9 8.6 21.4 9.5 16.7 14.1 17.8 20.7 12 17.6 6.2 20.7 7.3 14.1 2.6 9.5 9.1 8.6 12 2.7Z" />
+      </svg>
+    </span>`;
 
   const placeTitle = document.createElement('div');
   placeTitle.className = 'place-title';
@@ -226,14 +279,29 @@ function displayPlaceDetails (place) {
   const average = place.reviews.length > 0
     ? place.reviews.reduce((sum, r) => sum + r.rating, 0) / place.reviews.length
     : 0;
-  reviewsSection.innerHTML = `<h2>Reviews ⭐ ${average.toFixed(1)}</h2>`;
+  reviewsSection.innerHTML = `
+    <h2 class="reviews-heading">
+      Reviews
+      <span class="star-button is-filled review-title-star" aria-hidden="true">
+        <svg class="star-icon" viewBox="0 0 24 24" focusable="false">
+          <path d="M12 2.7 14.9 8.6 21.4 9.5 16.7 14.1 17.8 20.7 12 17.6 6.2 20.7 7.3 14.1 2.6 9.5 9.1 8.6 12 2.7Z" />
+        </svg>
+      </span>
+      <span class="average-rating">${average.toFixed(1)}</span>
+    </h2>
+  `;
   for (const review of place.reviews) {
     const reviewCard = document.createElement('div');
     reviewCard.className = 'review-card';
     reviewCard.innerHTML = `
         <p><b>${review.author_first_name} ${review.author_last_name}</b></p>
         <p>${review.text}</p>
-        <p>Rating: ${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</p>
+        <p class="review-rating">
+          Rating:
+          <span class="review-stars" aria-label="${review.rating} out of 5 stars">
+            ${Array.from({ length: 5 }, (_, index) => renderStar(index < review.rating, 'review-star')).join('')}
+          </span>
+        </p>
       `;
     reviewsSection.appendChild(reviewCard);
   }
@@ -261,6 +329,72 @@ async function submitReview (token, placeId, reviewText, reviewRating) {
   } else {
     alert('Failed to submit review');
   }
+}
+
+function initStarRating () {
+  const ratingSelect = document.getElementById('rating');
+  if (!ratingSelect || ratingSelect.dataset.enhanced === 'true') return;
+
+  ratingSelect.dataset.enhanced = 'true';
+  ratingSelect.classList.add('rating-select-hidden');
+
+  const starRating = document.createElement('div');
+  starRating.className = 'star-rating';
+  starRating.setAttribute('role', 'radiogroup');
+  starRating.setAttribute('aria-label', 'Rating');
+
+  const stars = [];
+
+  const paintStars = (activeValue) => {
+    for (const star of stars) {
+      const value = Number(star.dataset.value);
+      star.classList.toggle('is-filled', value <= activeValue);
+      star.setAttribute('aria-checked', String(value === activeValue));
+    }
+  };
+
+  const setRating = (value) => {
+    ratingSelect.value = String(value);
+    paintStars(value);
+  };
+
+  for (let i = 1; i <= 5; i++) {
+    const star = document.createElement('button');
+    star.type = 'button';
+    star.className = 'star-button';
+    star.dataset.value = String(i);
+    star.setAttribute('role', 'radio');
+    star.setAttribute('aria-label', `${i} star${i > 1 ? 's' : ''}`);
+    star.innerHTML = '<svg class="star-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 2.7 14.9 8.6 21.4 9.5 16.7 14.1 17.8 20.7 12 17.6 6.2 20.7 7.3 14.1 2.6 9.5 9.1 8.6 12 2.7Z" /></svg>';
+
+    star.addEventListener('mouseenter', () => paintStars(i));
+    star.addEventListener('focus', () => paintStars(i));
+    star.addEventListener('click', () => setRating(i));
+
+    stars.push(star);
+    starRating.appendChild(star);
+  }
+
+  starRating.addEventListener('mouseleave', () => {
+    paintStars(Number(ratingSelect.value || 1));
+  });
+
+  starRating.addEventListener('keydown', (event) => {
+    const current = Number(ratingSelect.value || 1);
+    if (event.key === 'ArrowRight' || event.key === 'ArrowUp') {
+      event.preventDefault();
+      setRating(Math.min(5, current + 1));
+      stars[Math.min(4, current)].focus();
+    }
+    if (event.key === 'ArrowLeft' || event.key === 'ArrowDown') {
+      event.preventDefault();
+      setRating(Math.max(1, current - 1));
+      stars[Math.max(0, current - 2)].focus();
+    }
+  });
+
+  ratingSelect.insertAdjacentElement('afterend', starRating);
+  setRating(Number(ratingSelect.value || 1));
 }
 
 // ============ INIT ============
@@ -301,10 +435,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const reviewForm = document.getElementById('review-form');
   const placeId = getPlaceIdFromURL();
 
+  initStarRating();
+
   if (reviewForm) {
     reviewForm.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const reviewText = document.getElementById('review-text').value;
+      const reviewTextField = document.getElementById('review-text') || document.getElementById('review');
+      if (!reviewTextField) return;
+
+      const reviewText = reviewTextField.value;
       const reviewRating = document.getElementById('rating').value;
       await submitReview(token, placeId, reviewText, reviewRating);
     });
