@@ -6,7 +6,7 @@ function getCookie (name) {
   const cookies = document.cookie.split('; ');
   for (const cookie of cookies) {
     if (cookie.startsWith(name + '=')) {
-      return cookie.split('=')[1];
+      return decodeURIComponent(cookie.substring(name.length + 1));
     }
   }
 }
@@ -35,10 +35,10 @@ function getSafePostLoginPath () {
 const storageKey = 'theme-preference';
 
 const getColorPreference = () => {
-  if (localStorage.getItem(storageKey)) { return localStorage.getItem(storageKey); } else {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light';
+  if (localStorage.getItem(storageKey)) {
+    return localStorage.getItem(storageKey);
+  } else {
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   }
 };
 
@@ -52,12 +52,9 @@ const setPreference = () => {
 };
 
 const reflectPreference = () => {
-  document.firstElementChild
-    .setAttribute('data-theme', theme.value);
+  document.firstElementChild.setAttribute('data-theme', theme.value);
 
-  document
-    .querySelector('#theme-toggle')
-    ?.setAttribute('aria-label', theme.value);
+  document.querySelector('#theme-toggle')?.setAttribute('aria-label', theme.value);
 
   const logo = document.querySelector('.logo');
   if (logo) {
@@ -86,21 +83,11 @@ const reflectPreference = () => {
   }
 };
 
+// Appel unique ici pour éviter le flash de thème au chargement
 reflectPreference();
 
-window.onload = () => {
-  reflectPreference();
-
-  document
-    .querySelector('#theme-toggle')
-    .addEventListener('click', onClick);
-};
-
 const onClick = () => {
-  theme.value = theme.value === 'light'
-    ? 'dark'
-    : 'light';
-
+  theme.value = theme.value === 'light' ? 'dark' : 'light';
   setPreference();
 };
 
@@ -112,10 +99,7 @@ async function loginUser (email, password) {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({
-      email,
-      password
-    })
+    body: JSON.stringify({ email, password })
   });
   if (response.ok) {
     const data = await response.json();
@@ -178,9 +162,10 @@ function checkAuthentication () {
       if (message) message.remove();
     }
   }
+
   const placesList = document.getElementById('places-list');
   if (placesList) {
-    fetchPlaces(token);
+    fetchPlaces(token || null);
   }
 
   return token;
@@ -206,7 +191,6 @@ function displayPlaces (places) {
   const placesList = document.getElementById('places-list');
   placesList.innerHTML = '';
   for (const place of places) {
-    console.log(place);
     const placeCard = document.createElement('div');
     placeCard.dataset.price = place.price;
     placeCard.className = 'place-card';
@@ -217,13 +201,12 @@ function displayPlaces (places) {
     </div>
     <a href="place.html?id=${place.id}" class="details-button" target="_blank">View Details</a>`;
     placesList.appendChild(placeCard);
-  } 
+  }
 }
 
 function getPlaceIdFromURL () {
   const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  return id;
+  return params.get('id');
 }
 
 async function fetchPlaceDetails (token, placeId) {
@@ -253,13 +236,12 @@ function displayPlaceDetails (place) {
 
   const placeTitle = document.createElement('div');
   placeTitle.className = 'place-title';
-  placeTitle.innerHTML = `
-  <h1>${place.title}</h1>`;
+  placeTitle.innerHTML = `<h1>${place.title}</h1>`;
   placeDetails.appendChild(placeTitle);
 
   const placeDetail = document.createElement('div');
   placeDetail.dataset.price = place.price;
-  placeDetail.className = 'place-details';
+  placeDetail.className = 'place-details place-info';
   placeDetail.innerHTML = `
     <p><b>Host:</b> ${place.owner.first_name} ${place.owner.last_name}</p>
     <p><b>Price per night:</b> $${place.price}</p>
@@ -308,10 +290,24 @@ function displayPlaceDetails (place) {
 }
 
 async function submitReview (token, placeId, reviewText, reviewRating) {
-  const headers = { 'Content-Type': 'application/json' };
-  if (token) headers.Authorization = `Bearer ${token}`;
-  const payload = JSON.parse(atob(token.split('.')[1]));
-  const userId = payload.sub;
+  if (!token) {
+    alert('You must be logged in to submit a review.');
+    return;
+  }
+
+  let userId;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    userId = payload.sub;
+  } catch (e) {
+    alert('Invalid session. Please log in again.');
+    return;
+  }
+
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${token}`
+  };
 
   const response = await fetch('http://localhost:5000/api/v1/reviews/', {
     method: 'POST',
@@ -323,13 +319,19 @@ async function submitReview (token, placeId, reviewText, reviewRating) {
       place_id: placeId
     })
   });
+
   if (response.ok) {
     alert('Review submitted successfully!');
-    // Clear the form
+    document.getElementById('review-text').value = '';
+    resetStarRating();
+    await fetchPlaceDetails(token, placeId);
   } else {
-    alert('Failed to submit review');
+    const err = await response.json().catch(() => ({}));
+    alert('Failed to submit review: ' + (err.error || response.statusText));
   }
 }
+
+// ============ STAR RATING ============
 
 function initStarRating () {
   const ratingSelect = document.getElementById('rating');
@@ -397,12 +399,32 @@ function initStarRating () {
   setRating(Number(ratingSelect.value || 1));
 }
 
+function resetStarRating () {
+  const ratingSelect = document.getElementById('rating');
+  if (!ratingSelect) return;
+
+  ratingSelect.value = '1';
+
+  const stars = document.querySelectorAll('.star-rating .star-button');
+  stars.forEach(star => {
+    const value = Number(star.dataset.value);
+    star.classList.toggle('is-filled', value <= 1);
+    star.setAttribute('aria-checked', String(value === 1));
+  });
+}
+
 // ============ INIT ============
 
 document.addEventListener('DOMContentLoaded', () => {
-  const token = checkAuthentication();
-  const loginForm = document.getElementById('login-form');
+  // Attacher le theme toggle ici, plus besoin de window.onload
+  document.querySelector('#theme-toggle')?.addEventListener('click', onClick);
 
+  const token = checkAuthentication();
+
+  // Un seul appel, disponible pour fetchPlaceDetails ET submitReview
+  const placeId = getPlaceIdFromURL();
+
+  const loginForm = document.getElementById('login-form');
   if (loginForm) {
     loginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -411,6 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await loginUser(email, password);
     });
   }
+
   const priceFilter = document.getElementById('price-filter');
   if (priceFilter) {
     priceFilter.addEventListener('change', (event) => {
@@ -426,21 +449,19 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
   const placeDetails = document.getElementById('place-details');
   if (placeDetails) {
-    const placeId = getPlaceIdFromURL();
     fetchPlaceDetails(token, placeId);
   }
 
-  const reviewForm = document.getElementById('review-form');
-  const placeId = getPlaceIdFromURL();
-
   initStarRating();
 
+  const reviewForm = document.getElementById('review-form');
   if (reviewForm) {
     reviewForm.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const reviewTextField = document.getElementById('review-text') || document.getElementById('review');
+      const reviewTextField = document.getElementById('review-text');
       if (!reviewTextField) return;
 
       const reviewText = reviewTextField.value;
